@@ -19,7 +19,7 @@ import users.*;
  * @author s3419069 (Mykhailo Muzyka)
  *	Main UI class
  */
-public class MiniNet {
+public class MiniNetConsole {
 
 	/**
 	 * represent object to read lines from Console
@@ -260,12 +260,12 @@ public class MiniNet {
 			AdultProfile parent = peopleFromCouple.get(selectedCoupleIdx);
 			
 			//create profile, but do not input it yet
-			newProfile = driver.createProfile(
-					name, age, status, image, parent, parent.getSpouse());
+			//newProfile = driver.createProfile(
+			//		name, age, status, image, parent, parent.getSpouse());
 		}
 		if (newProfile == null) {
 			//when adult must be created
-			newProfile = driver.createProfile(name, age, status, image);
+			//newProfile = driver.createProfile(name, age, status, image);
 		}
 		if (person == null) {
 			//perform Add
