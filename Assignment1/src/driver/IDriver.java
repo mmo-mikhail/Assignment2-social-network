@@ -1,7 +1,7 @@
 /*
  * @author s3419069 (Mykhailo Muzyka)
  * 
- * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 1 
+ * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package driver;
 
@@ -16,9 +16,12 @@ import users.*;
  */
 public interface IDriver {
 
-	Profile createProfile(String name, int age, String status, String image);
+	Profile createProfile(String name, int age, String status, String image,
+			String gender, String livingState);
 	
-	Profile createProfile(String name, int age, String status, String image, AdultProfile mother, AdultProfile father);
+	Profile createProfile(String name, int age, String status, String image,
+			String gender, String livingState,
+			AdultProfile mother, AdultProfile father);
 	
 	void insertProfile(Profile newProfile);
 	

@@ -1,7 +1,7 @@
 /*
  * @author s3419069 (Mykhailo Muzyka)
  * 
- * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 1 
+ * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package users;
 
@@ -16,13 +16,15 @@ public class AdultProfile extends Profile {
 	AdultProfile spouse;
 	ArrayList<ChildProfile> children = new ArrayList<ChildProfile>();
 	
-	public AdultProfile(String name, int age, String status) {
-		super(name, age, status, null);
+	public AdultProfile(String name, int age, String status,
+			String gender, String livingState) {
+		super(name, age, status, null, gender, livingState);
 			
 	}
 	
-	public AdultProfile(String name, int age, String status, String image) {
-		super(name, age, status, image);
+	public AdultProfile(String name, int age, String status, String image,
+			String gender, String livingState) {
+		super(name, age, status, image, gender, livingState);
 			
 	}
 	

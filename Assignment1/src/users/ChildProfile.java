@@ -1,7 +1,7 @@
 /*
  * @author s3419069 (Mykhailo Muzyka)
  * 
- * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 1 
+ * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package users;
 
@@ -15,14 +15,16 @@ public class ChildProfile extends Profile {
 	private AdultProfile father;
 	
 	public ChildProfile(String name, int age, String status, 
+			String gender, String livingState,
 			AdultProfile mother, AdultProfile father) {
-		this(name, age, status, null, mother, father);
+		this(name, age, status, null, gender, livingState, mother, father);
 						
 	}
 	
-	public ChildProfile(String name, int age, String status, String image, 
+	public ChildProfile(String name, int age, String status, String image,
+			String gender, String livingState,
 			AdultProfile mother, AdultProfile father) {
-		super(name, age, status, image);
+		super(name, age, status, image, gender, livingState);
 		
 		mother.addChildren(this);
 		father.addChildren(this);

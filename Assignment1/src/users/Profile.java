@@ -1,7 +1,7 @@
 /*
  * @author s3419069 (Mykhailo Muzyka)
  * 
- * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 1 
+ * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package users;
 import java.util.*;
@@ -17,10 +17,13 @@ public abstract class Profile {
 	int age;
 	String name;
 	String image;
+	String gender;
+	String livingState;
 	
 	UUID profileGuid; //unique id of each profile
 	
-	protected Profile(String name, int age, String status, String image) {
+	protected Profile(String name, int age, String status, String image,
+			String gender, String livingState) {
 		this.status = status;
 		this.age = age;
 		this.name = name;

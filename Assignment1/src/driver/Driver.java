@@ -1,7 +1,7 @@
 /*
  * @author s3419069 (Mykhailo Muzyka)
  * 
- * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 1 
+ * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package driver;
 
@@ -24,19 +24,24 @@ public class Driver implements IDriver {
 	/**
 	 * just create profile of Adult without adding it to storage
 	 */
-	public Profile createProfile(String name, int age, String status, String image) {
-		AdultProfile newProfile = new AdultProfile(name, age, status, image);
+	public Profile createProfile(String name, int age, String status, String image,
+			String gender, String livingState) {
+		AdultProfile newProfile =
+				new AdultProfile(name, age, status, image, gender, livingState);
 		return newProfile;
 	}
 	
 	/**
 	 * just create profile of Child without adding it to storage
 	 */
-	public Profile createProfile(String name, int age, String status, String image, AdultProfile mother, AdultProfile father) {
+	public Profile createProfile(String name, int age, String status, String image,
+			String gender, String livingState,
+			AdultProfile mother, AdultProfile father) {
 		if (mother.getSpouse() != father) {
 			return null; // couple must be married to have a child
 		}
-		Profile newProfile = new ChildProfile(name, age, status, image, mother, father);
+		Profile newProfile =
+				new ChildProfile(name, age, status, image, gender, livingState, mother, father);
 		return newProfile;
 	}
 	
