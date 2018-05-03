@@ -31,40 +31,7 @@ public class ProfileRepository {
 	 * data initialization method
 	 */
 	private static void init() {
-		AdultProfile alice = new AdultProfile("Alice", 22, "RMIT student");
-		AdultProfile bob = new AdultProfile("Bob", 30, "RMIT");
-		bob.AddSpouse(alice);
-		alice.AddSpouse(bob);
-		ChildProfile mike = new ChildProfile("Mike", 12, "student at secondary school", bob, alice);
-		
-		AdultProfile nick = new AdultProfile("Nick", 25, "employer");
-		nick.addFriend(bob);
-		
-		AdultProfile kate = new AdultProfile("Kate", 80, "teacher");
-		AdultProfile sharoon = new AdultProfile("Sharoon", 80, "accounter");
-		AdultProfile pete = new AdultProfile("Pete", 19, "officer");
-		AdultProfile sandy = new AdultProfile("Sandy", 19, "student");
-		AdultProfile misha = new AdultProfile("Misha", 19, "volunteir");
-		pete.AddSpouse(sharoon);
-		sharoon.AddSpouse(pete);
-		ChildProfile sara = new ChildProfile("Sara", 10, "student at secondary school", sharoon, pete);
-		ChildProfile brad = new ChildProfile("Brad", 2, "student at primary school", sharoon, pete);
-		ChildProfile jack = new ChildProfile("Jack ", 4, "student at primary school", bob, alice);
-		sara.addFriend(mike);
-		mike.addFriend(sara);
-		
-		profiles.add(alice);
-		profiles.add(bob);
-		profiles.add(nick);
-		profiles.add(mike);
-		profiles.add(kate);
-		profiles.add(sharoon);
-		profiles.add(pete);
-		profiles.add(sandy);
-		profiles.add(misha);
-		profiles.add(sara);
-		profiles.add(brad);
-		profiles.add(jack);
+
 	}
 	
 	/**
