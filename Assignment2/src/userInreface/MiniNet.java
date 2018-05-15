@@ -266,8 +266,8 @@ public class MiniNet extends Application {
 		String text = sp1.getSelectedProfile().getName()
 				+ " AND " + sp2.getSelectedProfile().getName()
 				+ (isConnected
-						? " is directly connected"
-						: " is NOT directly connected"); 
+						? " are directly connected"
+						: " are NOT directly connected"); 
 		showError(AlertType.INFORMATION, text);
 	}
 
