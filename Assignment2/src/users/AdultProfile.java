@@ -13,7 +13,6 @@ import java.util.ArrayList;
  */
 public class AdultProfile extends Profile {
 
-	AdultProfile spouse;
 	ArrayList<ChildProfile> children = new ArrayList<ChildProfile>();
 	
 	public AdultProfile(String name, int age, String status,
@@ -26,32 +25,6 @@ public class AdultProfile extends Profile {
 			String gender, String livingState) {
 		super(name, age, status, image, gender, livingState);
 			
-	}
-	
-	/**
-	 * Add spouse to current person
-	 */
-	public void AddSpouse(AdultProfile profile) {
-		spouse = profile;
-		super.addFriend(profile);
-	}
-	
-	/**
-	 * Get spouse of current person
-	 */
-	public AdultProfile getSpouse() {
-		return spouse;
-	}
-	
-	/**
-	 * Delete spouse of current person if exists
-	 */
-	public void deleteSpouse() {
-		if (spouse == null) {
-			return;
-		}
-		super.removeFriend(spouse);
-		spouse = null;
 	}
 	
 	/**
@@ -68,15 +41,5 @@ public class AdultProfile extends Profile {
 		if (!children.contains(child)) {
 			children.add(child);
 		}
-	}
-	
-	/**
-	 * delete specific child
-	 */
-	public boolean deleteChild(ChildProfile child) {
-		if (children.contains(child)) {
-			return children.remove(child);
-		}
-		return false;
 	}
 }

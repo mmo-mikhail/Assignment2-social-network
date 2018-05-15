@@ -4,7 +4,6 @@
  * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
 package users;
-import java.util.*;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
@@ -12,7 +11,6 @@ import java.util.*;
  */
 public abstract class Profile {
 	
-	List<Profile> friends = new ArrayList<Profile>();
 	String status;
 	int age;
 	String name;
@@ -20,35 +18,14 @@ public abstract class Profile {
 	String gender;
 	String livingState;
 	
-	UUID profileGuid; //unique id of each profile
-	
 	protected Profile(String name, int age, String status, String image,
 			String gender, String livingState) {
 		this.status = status;
 		this.age = age;
 		this.name = name;
 		this.image = image;
-		
-		profileGuid = UUID.randomUUID(); //generate unique id for current object
-	}
-	
-	public boolean addFriend(Profile profile) {
-		friends.add(profile);
-		return true;
-	}
-	
-	/**
-	 * Gets all friends
-	 */
-	public List<Profile> getAllFriends(){
-		return friends;
-	}
-	
-	/**
-	 * Remove friend
-	 */
-	public Boolean removeFriend(Profile profile) {
-		return friends.remove(profile);
+		this.gender = gender;
+		this.livingState = livingState;
 	}
 
 	/**
@@ -78,11 +55,18 @@ public abstract class Profile {
 	public String getImage() {
 		return image;
 	}
-
+	
 	/**
-	 * @return Profile Id
+	 * @return Gender
 	 */
-	public UUID getProfileGuid() {
-		return profileGuid;
+	public String getGender() {
+		return gender;
+	}
+	
+	/**
+	 * @return Living State
+	 */
+	public String getLivingState() {
+		return livingState;
 	}
 }
