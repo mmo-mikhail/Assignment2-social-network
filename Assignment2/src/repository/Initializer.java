@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hsqldb.Server;
-
 public class Initializer {
 
 	public final static String dbName = "jdbc:hsqldb:db\\socialNetwork;hsqldb.write_delay=false;";
@@ -69,7 +67,7 @@ public class Initializer {
 			Connection con =
 					DriverManager.getConnection(
 							dbName + ";ifexists=true", userName, userPass);
-			Statement stmt = con.createStatement();
+			con.createStatement();
 		} catch (Exception e) {
 			if (e.getMessage().contains("Database does not exists")) {
 				return false;
