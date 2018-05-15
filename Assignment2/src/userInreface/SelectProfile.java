@@ -125,6 +125,14 @@ public class SelectProfile extends SecondaryStage {
 	}
 	
 	/**
+	 * @return Stage title
+	 */
+	@Override
+	protected String stageTitle() {
+		return isProfileSelectable ? "Select Profile" : "All Profiles List";
+	}
+	
+	/**
 	 * @return height of the stage
 	 */
 	@Override

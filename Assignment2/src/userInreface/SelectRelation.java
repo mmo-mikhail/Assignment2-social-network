@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
- * this class represents simple Select Relation stage
+ * this class represents Select Relation stage
  */
 public class SelectRelation extends SecondaryStage {
 	
@@ -47,6 +47,14 @@ public class SelectRelation extends SecondaryStage {
   			    );
   		comboBox.setItems(options);
   		paneWrapper.add(comboBox, 1, 2);	
+	}
+	
+	/**
+	 * @return Stage title
+	 */
+	@Override
+	protected String stageTitle() {
+		return "Select Relation";
 	}
 	
 }

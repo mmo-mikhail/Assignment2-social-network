@@ -77,6 +77,14 @@ public class ShowProfile extends SecondaryStage {
 	}
 	
 	/**
+	 * @return Stage title
+	 */
+	@Override
+	protected String stageTitle() {
+		return "Show Profile";
+	}
+	
+	/**
 	 * @return height of the stage
 	 */
 	@Override

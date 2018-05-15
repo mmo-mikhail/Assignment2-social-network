@@ -27,7 +27,7 @@ public abstract class SecondaryStage {
 		this.rootStage = rootStage;
 		//init Stage
 		Stage stage = new Stage();
-        stage.setTitle("All People");
+        stage.setTitle(stageTitle());
         this.stage = stage;
         
         //init Pane
@@ -53,6 +53,13 @@ public abstract class SecondaryStage {
         stage.setScene(new Scene(everyonePane, getWidth(), getHeight()));
         rootStage.hide();
         stage.showAndWait();
+	}
+	
+	/**
+	 * @return Stage title
+	 */
+	protected String stageTitle() {
+		return "";
 	}
 	
 	/**
@@ -83,7 +90,6 @@ public abstract class SecondaryStage {
 		return 200;
 	}
 	
-
 	/**
 	 * closes the stage and display root/main stage
 	 */

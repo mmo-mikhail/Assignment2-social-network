@@ -69,7 +69,15 @@ public class AddPerson extends SecondaryStage {
 		
 		gridPaneContainer.add(btnOk, 0, 7);		
 	}
-
+	
+	/**
+	 * @return Stage title
+	 */
+	@Override
+	protected String stageTitle() {
+		return "Add Person";
+	}
+	
 	/**
 	 * @return close button text
 	 */
