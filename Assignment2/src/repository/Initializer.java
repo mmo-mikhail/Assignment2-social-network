@@ -10,6 +10,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
@@ -50,6 +52,7 @@ public class Initializer {
 	 * main enter method to create/update DB if needed
 	 */
 	public static String Init() {
+		Logger.getLogger("hsqldb.db").setLevel(Level.WARNING);
 		if (!checkClassPath()) {
 			return "DB Error: Try add hsqldb.jar to classpath";
 		}
@@ -335,7 +338,7 @@ public class Initializer {
 			while ((line = bufferedReader.readLine()) != null) {
 				//read each line
 				line = line.replace("“", "").replace("”", "")
-						.replace("\"", "");
+						.replace("\"", "").replace("'", "");
 				String[] values = line.split(",");
 				if (!validatePerson(values)) {
 					continue;
