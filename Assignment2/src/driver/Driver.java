@@ -5,8 +5,10 @@
  */
 package driver;
 
+import java.sql.SQLException;
 import java.util.*;
 
+import CustomExceptions.*;
 import repository.ProfileRepository;
 import users.*;
 
@@ -22,87 +24,44 @@ public class Driver implements IDriver {
 	private ProfileRepository profileRepository = new ProfileRepository();
 	
 	/**
-	 * just create profile of Adult without adding it to storage
-	 */
-	public Profile createProfile(String name, int age, String status, String image,
-			String gender, String livingState) {
-		AdultProfile newProfile =
-				new AdultProfile(name, age, status, image, gender, livingState);
-		return newProfile;
-	}
-	
-	/**
-	 * just create profile of Child without adding it to storage
-	 */
-	public Profile createProfile(String name, int age, String status, String image,
-			String gender, String livingState,
-			AdultProfile mother, AdultProfile father) {
-		if (mother.getSpouse() != father) {
-			return null; // couple must be married to have a child
-		}
-		Profile newProfile =
-				new ChildProfile(name, age, status, image, gender, livingState, mother, father);
-		return newProfile;
-	}
-	
-	/**
 	 * insert specified profile to the storage
+	 * @throws SQLException 
 	 */
-	public void insertProfile(Profile newProfile) {
-		profileRepository.add(newProfile);
+	public void insertProfile(String name, int age, String status, String image,
+			String gender, String state) throws SQLException {
+		profileRepository.add(name, image, status, gender, age, state);
 	}
 
-	/**
-	 * get single profile by profile's name match or null when no profile is found
-	 */
-	public Profile findByName(String name) {
-		try {
-			return profileRepository.getAll().stream()
-					.filter(person -> person.getName().equals(name))
-					.findFirst().get();
-		} catch(NoSuchElementException ex) {
-			//.get() method raise this exception when no element found
-			return null;
-		}
-	}
-
-	/**
-	 * get string of specific person's data
-	 */
-	public String displayPerson(Profile profile) {
-		//write base data first
-		String info = "Name:" + profile.getName() + "; "
-				+ "Age:" + profile.getAge() + "; "
-				+ "Status:" + profile.getStatus() + "; "
-				+ "Image:" + profile.getImage() + "; ";
-		
-		if (profile instanceof AdultProfile) {
-			//add data specific for adults
-			AdultProfile adult = (AdultProfile)profile;
-			if (adult.getSpouse() == null) {
-				info += "Not Married; ";
-			} else {
-				info += "Spouse: " + adult.getSpouse().getName() + "; ";
-				info += "Children: " + getDependantName(adult) + "; ";
-			}
-		} else {
-			//add data specific for children
-			info += "Parents: " + getNamesOfTheParents((ChildProfile)profile) + "; ";
-		}
-		//show friends at the end
-		info += "Friends: ";
-		for (Profile friend : profile.getAllFriends()) {
-			info += friend.getName();
-		}
-		return info;
-	}
-
-	/**
-	 * update profile
-	 */
-	public void updateProfile(UUID profileId, Profile newProfile) {
-		profileRepository.update(profileId, newProfile);
-	}
+//	/**
+//	 * get string of specific person's data
+//	 */
+//	public String displayPerson(Profile profile) {
+//		//write base data first
+//		String info = "Name:" + profile.getName() + "; "
+//				+ "Age:" + profile.getAge() + "; "
+//				+ "Status:" + profile.getStatus() + "; "
+//				+ "Image:" + profile.getImage() + "; ";
+//		
+//		if (profile instanceof AdultProfile) {
+//			//add data specific for adults
+//			AdultProfile adult = (AdultProfile)profile;
+//			if (adult.getSpouse() == null) {
+//				info += "Not Married; ";
+//			} else {
+//				info += "Spouse: " + adult.getSpouse().getName() + "; ";
+//				info += "Children: " + getDependantName(adult) + "; ";
+//			}
+//		} else {
+//			//add data specific for children
+//			info += "Parents: " + getNamesOfTheParents((ChildProfile)profile) + "; ";
+//		}
+//		//show friends at the end
+//		info += "Friends: ";
+//		for (Profile friend : profile.getAllFriends()) {
+//			info += friend.getName();
+//		}
+//		return info;
+//	}
 
 	/**
 	 * delete profile from storage
@@ -123,11 +82,11 @@ public class Driver implements IDriver {
 			}
 		}
 		//delete spouse
-		((AdultProfile)profile).deleteSpouse();
+//		((AdultProfile)profile).deleteSpouse();
 		
 		// and then delete main profile
 		//return true only when all profiles successfully deleted
-		return profileRepository.delete(profile.getProfileGuid())
+		return profileRepository.delete(profile.getName())
 				&& deleteChildrenSuccess;
 	}
 	
@@ -136,44 +95,17 @@ public class Driver implements IDriver {
 	 * returns true only when child successfully completely deleted
 	 */
 	private boolean deleteChild(ChildProfile child) {
-		return profileRepository.delete(child.getProfileGuid())
-				&& child.getMother().deleteChild(child)
-				&& child.getFather().deleteChild(child);		
+		return profileRepository.delete(child.getName());
+//				&& child.getParent1().deleteChild(child)
+//				&& child.getParent2().deleteChild(child);		
 	}
-
-	/**
-	 * help method to delete child
-	 * returns true only when friendship was created completely
-	 */
-	public boolean setupFriendShip(Profile profile1, Profile profile2) {
-		if (profile1.getAge() <= 16 && profile2.getAge() >= 16
-				|| profile2.getAge() <= 16 && profile1.getAge() >= 16) {
-			return false; // there cannot be friendship between child and adult
-		}
-		return profile1.addFriend(profile2)
-				&& profile2.addFriend(profile1);
-	}
-	
-	/**
-	 * set marriage relationship for adults
-	 * return true when relationship created
-	 */
-	public boolean marryPeople(AdultProfile profile1, AdultProfile profile2) {
-		if (profile1.getSpouse() != null || profile2.getSpouse() != null
-				|| profile1 == profile2) {
-			return false; // each adult must not have spouse and they must be different people
-		}
-		profile1.AddSpouse(profile2);
-		profile2.AddSpouse(profile1);
-		return true;
-	}
-	
 
 	/**
 	 * indicates whether profiles has friendship relationship
 	 */
-	public boolean isDirectFriends(Profile profile1, Profile profile2) {
-		return profile1.getAllFriends().contains(profile2);
+	public boolean isDirectlyConnected(Profile profile1, Profile profile2) {
+		return profileRepository.isDirectlyConnected(
+				profile1.getName(), profile2.getName());
 	}
 
 	/**
@@ -195,28 +127,8 @@ public class Driver implements IDriver {
 	 * get names of both parents of specific child
 	 */
 	public String getNamesOfTheParents(ChildProfile profile) {
-		return "Father: " + profile.getFather().getName()
-				+ " | Mother: " +  profile.getMother().getName();
-	}
-	
-	/**
-	 * helper
-	 * get only one person from each couple
-	 */
-	public List<AdultProfile> getUniqueSpouses() {
-		ArrayList<AdultProfile> personsFromCouple = new ArrayList<AdultProfile>();
-		for (Profile profile : profileRepository.getAll()) {
-			if (!(profile instanceof AdultProfile)) continue; // skip children
-			AdultProfile adult = (AdultProfile)profile;
-			AdultProfile spouse = adult.getSpouse();
-			if (spouse == null) continue; // skip non married people
-			
-			if (!personsFromCouple.contains(spouse)
-					&& !personsFromCouple.contains(adult)) {
-				personsFromCouple.add(adult);
-			}
-		}
-		return personsFromCouple;
+		return "Parent 1: " + profile.getParent1().getName()
+				+ " | Parent 2: " +  profile.getParent2().getName();
 	}
 	
 	/**
@@ -224,5 +136,80 @@ public class Driver implements IDriver {
 	 */
 	public List<Profile> getAllProfiles(){
 		return profileRepository.getAll();
+	}
+
+
+	public void setRelation(Profile profile1, Profile profile2,
+			String relation)
+			throws NotToBeColleaguesException, NotToBeClassmatesException,
+			NotToBeFriendsException, TooYoungException,
+			NotToBeCoupledException, NoAvailableException,
+			SQLException {
+		if (validateRelation(profile1, profile2, relation)) {
+			profileRepository.setRelation(
+					profile1.getName(),
+					profile2.getName(),
+					relation);
+		}
+	}
+	
+	public void setParentalRelation(String childName,
+			String parent1, String parent2)
+			throws SQLException {
+			profileRepository.setRelation(childName, parent1, "parent");
+			profileRepository.setRelation(childName, parent2, "parent");
+	}
+
+	private boolean validateRelation(Profile profile1, Profile profile2,
+			String relation)
+			throws NotToBeColleaguesException, NotToBeClassmatesException,
+					NotToBeFriendsException, TooYoungException,
+					NotToBeCoupledException, NoAvailableException,
+					SQLException {
+		int age1 = profile1.getAge();
+		int age2 = profile2.getAge();
+		switch(relation) {
+			case "colleagues":
+				if (age1 > 16 && age2 > 16) return true;
+				throw new NotToBeColleaguesException();
+			case "classmates":
+				if (age1 <= 2 || age2 <= 2) return true;
+				throw new NotToBeClassmatesException ();
+			case "friends":
+				if (age1 <= 16 && age2 > 16 || age2 <= 16 && age1 > 16) {
+					throw new NotToBeFriendsException();
+				}
+				if (age1 <= 2 || age2 <= 2) {
+					throw new TooYoungException();
+				}
+				if (age1 <= 16 && age2 <= 16
+					&& (age1 - age2 > 3 || age2 - age1 > 3)) {
+					throw new NotToBeFriendsException();
+				}
+				return true;
+			case "couple":
+				if (age1 <= 16 || age2 <= 16) {
+					throw new NotToBeCoupledException();
+				}
+				if (!profileRepository.coupleAllowed(
+						profile1.getName(),
+						profile2.getName())) {
+					throw new NoAvailableException();
+				}
+				return true;
+			case "parent":
+				// we don't need to check here because in this case
+				// only valid data can 
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * helper
+	 * get only one person from each couple
+	 */
+	public String[] getSpouses(String separator) {
+		return profileRepository.getSpouses(separator);
 	}
 }

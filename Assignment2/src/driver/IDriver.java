@@ -5,9 +5,10 @@
  */
 package driver;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
+import CustomExceptions.*;
 import users.*;
 
 /**
@@ -15,37 +16,29 @@ import users.*;
  * General behavior of the driver
  */
 public interface IDriver {
-
-	Profile createProfile(String name, int age, String status, String image,
-			String gender, String livingState);
 	
-	Profile createProfile(String name, int age, String status, String image,
-			String gender, String livingState,
-			AdultProfile mother, AdultProfile father);
-	
-	void insertProfile(Profile newProfile);
-	
-	Profile findByName(String name);
-	
-	String displayPerson(Profile profile);
-	
-	void updateProfile(UUID profileId, Profile newProfile);
+	void insertProfile(String name, int age, String status, String image,
+			String gender, String livingState) throws SQLException;
 	
 	boolean deletePerson(Profile profile);
 	
-	boolean setupFriendShip(Profile profile1, Profile profile2);
-	
-	boolean marryPeople(AdultProfile profile1, AdultProfile profile2);
-	
-	boolean isDirectFriends(Profile profile1, Profile profile2);
+	boolean isDirectlyConnected(Profile profile1, Profile profile2);
 	
 	String getDependantName(AdultProfile adultProfile);
 	
 	String getNamesOfTheParents(ChildProfile profile);
 	
 	List<Profile> getAllProfiles(); 
+
+	void setRelation(Profile selectedProfile, Profile selectedProfile2,
+			String relation)
+			throws NotToBeColleaguesException, NotToBeClassmatesException,
+			NotToBeFriendsException, TooYoungException,
+			NotToBeCoupledException, NoAvailableException, SQLException;
+	
+	void setParentalRelation(String childName,
+			String parent1, String parent2) throws SQLException;
 	
 	//helpers
-	List<AdultProfile> getUniqueSpouses();
-	
+	String[] getSpouses(String separator);
 }
