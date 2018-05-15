@@ -5,15 +5,24 @@
  */
 package userInreface;
 
-import java.util.Arrays;
+import java.sql.SQLException;
+
+import CustomExceptions.*;
 import driver.Driver;
 import driver.IDriver;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import repository.Initializer;
+import users.AdultProfile;
+import users.ChildProfile;
+import users.Profile;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
@@ -22,24 +31,45 @@ import javafx.stage.Stage;
 public class MiniNet extends Application {
 	
 	/**
-	 * main class with logic
+	 * main driver class with business logic
 	 */
 	static IDriver driver = new Driver();
+	
+	/**
+	 * selected person
+	 */
+	Profile selectedPerson = null; // selected person
 	
 	/**
 	 * startup method
 	 */
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {
+		String result = Initializer.Init();
+		if (result != null) {
+			showError(result);
+			return;
+		}
+		if (Initializer.getLogs().length() > 1) {
+			showError(Alert.AlertType.WARNING, Initializer.getLogs());
+		}
 		GridPane mainPain = initPane(); // Create a pane1
 		
-		setupMainPain(mainPain, primaryStage);
+		setupMainPane(mainPain, primaryStage);
 		
 		// Create a scene and place it in the stage
-		Scene scene = new Scene(mainPain, 600, 400);
+		Scene scene = new Scene(mainPain, 600, 450);
 		primaryStage.setTitle("Social Network"); // Set the stage title
 		primaryStage.setScene(scene); // Place the scene in the stage
 		primaryStage.show(); // Display the stage
+		
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent t) {
+		        //Platform.exit();
+		        System.exit(0);
+		    }
+		});
 	}
 	
 	private GridPane initPane() {
@@ -47,136 +77,177 @@ public class MiniNet extends Application {
 		pane.setAlignment(Pos.TOP_LEFT);
 		pane.setPadding(new Insets(15, 15, 15, 15));
 		pane.setHgap(5.5);
-		pane.setVgap(5.5);
+		pane.setVgap(20);
 		return pane;
 	}
 	
-	private void setupMainPain(GridPane pane, Stage rootStage) {
+	private void setupMainPane(GridPane pane, Stage rootStage) {
+		Button btnShowAll = new Button("Show Everyone");
+		btnShowAll.setOnAction(e -> {
+			new SelectProfile(false).show(rootStage);
+		});	
 		Button btnAddNewPerson = new Button("Add Person");
-		btnAddNewPerson.setOnAction(e -> { runAddPerson(rootStage); });
+		btnAddNewPerson.setOnAction(e -> { addNewPerson(rootStage); });
 		
+		Button btnDisplayProfile = new Button("Display selected profile");
+		btnDisplayProfile.setDisable(true);
+		btnDisplayProfile.setOnAction(e -> {
+			ShowProfile sp = new ShowProfile(selectedPerson);
+			sp.show(rootStage);
+		});
 		
-		pane.add(btnAddNewPerson, 1,0);
-	}
-	
-	private void runAddPerson(Stage rootStage) {
-		//init Stage
-		Stage stage = new Stage();
-        stage.setTitle("Add New Person");
-      
-        //init Pane
-		GridPane addPersonPane = new GridPane();
-		addPersonPane.setAlignment(Pos.TOP_LEFT);
-		addPersonPane.setPadding(new Insets(15, 15, 15, 15));
-		addPersonPane.setHgap(5.5);
-		addPersonPane.setVgap(5.5);
+		Button btnFindSubNames = new Button("Display Names of person's"
+				+ "children OR of parents if child selected");
+		btnFindSubNames.setDisable(true);
+		btnFindSubNames.setOnAction(e -> { findSubNames();});
 		
-		TextField tfName = new TextField();
-		TextField tfImage = new TextField();
-		TextField tfStatus = new TextField();
-		TextField tfGender = new TextField();
-		TextField tfAge = new TextField();
-		TextField tfLivingState = new TextField();
+		Label lbSelectedPerson = new Label("No person selected");
 		
-		Button okBtn = new Button("Ok");
-		okBtn.setOnAction(e -> {
-			if (addNewPerson(tfName.getText(),
-					tfImage.getText(),
-					tfStatus.getText(),
-					tfGender.getText(),
-					tfAge.getText(),
-					tfLivingState.getText().toUpperCase())) {
-				//if person was added successfully
-				stage.hide(); //hide current stage
-				rootStage.show(); //display root one instead
+		Button btnDeleteProfile = new Button("Delete selected profile");
+		btnDeleteProfile.setDisable(true);
+		btnDeleteProfile.setOnAction(e ->
+		{
+			if (deleteProfile(selectedPerson)) {
+				btnDisplayProfile.setDisable(true);
+				btnDeleteProfile.setDisable(true);
+				btnFindSubNames.setDisable(true);
+				showError("Person Deleted successfully");
+				lbSelectedPerson.setText("No profile selected");
+			} else {
+				showError("Error on deleting person");
 			}
 		});
-		Button cancelBtn = new Button ("Cancel");
-		cancelBtn.setOnAction(e -> {
-			stage.hide(); //hide current stage
-			rootStage.show(); //display root one instead
+		
+		Button btnIsDirectFriends =
+				new Button("Are two prople directly connected?");
+		btnIsDirectFriends.setOnAction(e -> { areTwoConnected(rootStage); });
+		
+		Button btnDefineRelation = new Button("Define relation");
+		btnDefineRelation.setOnAction(e -> { defineRelation(rootStage); });
+		
+		Button btnSelectPerson = new Button("Select Person");
+		btnSelectPerson.setOnAction(e ->
+		{
+			SelectProfile sp = new SelectProfile(true);
+			sp.show(rootStage);			
+			if (sp.getSelectedProfile() == null) return;
+			
+			selectedPerson = sp.getSelectedProfile();
+			lbSelectedPerson.setText("Selected Person: "
+					+ selectedPerson.getName());
+			btnDisplayProfile.setDisable(false);
+			btnDeleteProfile.setDisable(false);
+			btnFindSubNames.setDisable(false);
 		});
-		//add all buttons
-		addPersonPane.add(new Label("Name:"), 0, 0);
-		addPersonPane.add(tfName, 1, 0);
-		addPersonPane.add(new Label("Image:"), 0, 1);
-		addPersonPane.add(tfImage, 1, 1);
-		addPersonPane.add(new Label("Status:"), 0, 2);
-		addPersonPane.add(tfStatus, 1, 2);
-		addPersonPane.add(new Label("Gender:"), 0, 3);
-		addPersonPane.add(tfGender, 1, 3);
-		addPersonPane.add(new Label("Age:"), 0, 4);
-		addPersonPane.add(tfAge, 1, 4);
-		addPersonPane.add(new Label("Living State:"), 0, 5);
-		addPersonPane.add(tfLivingState, 1, 5);
 		
-		addPersonPane.add(okBtn, 0, 7);
-		addPersonPane.add(cancelBtn, 1, 7);
+		pane.add(btnShowAll, 0, 0);
+		pane.add(btnAddNewPerson, 0, 1);
+		pane.add(btnSelectPerson, 0, 2);
+		pane.add(lbSelectedPerson, 1, 2);
+		pane.add(btnDisplayProfile, 0, 3);
+		pane.add(btnDeleteProfile, 0, 4);
+		pane.add(btnIsDirectFriends, 0, 5);
+		pane.add(btnDefineRelation, 0, 6);
+		pane.add(btnFindSubNames, 0, 7);
 		
-		//set scene and show it
-        stage.setScene(new Scene(addPersonPane, 450, 450));
-        stage.show();
-        rootStage.hide();
+		Button btnExit = new Button("Exit");
+		btnExit.setOnAction(e -> { 
+			rootStage.close();
+		});
+		pane.add(btnExit, 0, 8);
+	}
+
+	private void findSubNames() {
+		String text;
+		if (selectedPerson instanceof AdultProfile) {
+			text = "Children: "
+				+ driver.getDependantName((AdultProfile)selectedPerson);
+		} else {
+			text = "Parents: "
+				+ driver.getNamesOfTheParents(
+						(ChildProfile)selectedPerson);
+		}
+		
+		showError(AlertType.INFORMATION, text);
+	}
+
+	private void addNewPerson(Stage rootStage) {
+		AddPerson addHelper = new AddPerson() {
+			@Override
+			public void displayError(String errorText) {
+				showError(errorText);
+			}
+		};
+		addHelper.show(rootStage);
 	}
 	
-	private boolean addNewPerson(String name,
-			String image,
-			String status,
-			String gender,
-			String ageRaw,
-			String livingState) {
-		//validate
-		if (isInputInvalid(name, image, status, gender, ageRaw, livingState))
-			return false;
-		//cool, go ahead
-		int age = Integer.parseInt(ageRaw);
-
+	private void defineRelation(Stage rootStage) {
+		SelectProfile sp1 = new SelectProfile(true);
+		sp1.show(rootStage);			
+		if (sp1.getSelectedProfile() == null) return;
 		
+		SelectProfile sp2 = new SelectProfile(true);
+		sp2.show(rootStage);
+		if (sp2.getSelectedProfile() == null) return;
 		
-		return true;
-	}
-
-	private boolean isInputInvalid(String name,
-			String image,
-			String status,
-			String gender,
-			String age,
-			String livingState) {
-		//show error if at least one of following condition is true
-		return isInvalid(name.equals(""), "Name cannot be empty") ||
-			isInvalid(name.length() > 50, "Name is too long") ||
-			isInvalid(status.equals(""), "Status cannot be empty") ||
-			isInvalid(status.length() > 50, "Status is too long") ||
-			isInvalid(gender.equals(""), "Gender cannot be empty") ||
-			isInvalid(!isValidAge(age), "Please enter valid age") ||
-			isInvalid(!isValidState(livingState), "Please enter valid state");
-	}
-
-	private boolean isValidState(String livingState) {
-		String[] states = new String[]
-				{"ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"};
-		return Arrays.asList(states).contains(livingState);
-	}
-
-	private boolean isValidAge(String ageRaw) {
+		if (sp1.getSelectedProfile().getName()
+			== sp2.getSelectedProfile().getName()) {
+			showError("Please choose different people");
+			return;
+		}
+		
+		SelectRelation relationWindow = new SelectRelation();
+		relationWindow.show(rootStage);
+		if (relationWindow.getRelation() == null) return;
 		try {
-			int age = Integer.parseInt(ageRaw);
-			return age > 0 && age < 150;
-		} catch (NumberFormatException ex) {
-			//not number was in input
-			return false;
+			driver.setRelation(
+					sp1.getSelectedProfile(),
+					sp2.getSelectedProfile(),
+					relationWindow.getRelation());
+		} catch (NotToBeColleaguesException | NotToBeClassmatesException
+				| NotToBeFriendsException | TooYoungException
+				| NotToBeCoupledException | NoAvailableException e) {
+			showError(e.getMessage());
+		} catch (SQLException e) {
+			showError("DB error occured");
+		} catch (Exception e) {
+			showError("Unexpected error occured");
 		}
 	}
 
-	private boolean isInvalid(boolean condition, String errorText) {
-		if (condition) {
-			showError(errorText);
-		}
-		return condition;
+	private void areTwoConnected(Stage rootStage) {
+		SelectProfile sp1 = new SelectProfile(true);
+		sp1.show(rootStage);			
+		if (sp1.getSelectedProfile() == null) return;
+		
+		SelectProfile sp2 = new SelectProfile(true);
+		sp2.show(rootStage);			
+		if (sp2.getSelectedProfile() == null) return;
+		
+		boolean isConnected = driver.isDirectlyConnected(
+				sp1.getSelectedProfile(),
+				sp2.getSelectedProfile());
+		String text = sp1.getSelectedProfile().getName()
+				+ " AND " + sp2.getSelectedProfile().getName()
+				+ (isConnected
+						? " is directly connected"
+						: " is NOT directly connected"); 
+		showError(AlertType.INFORMATION, text);
 	}
 
+	private boolean deleteProfile(Profile profile) {
+		return driver.deletePerson(profile);
+	}
+	
+	private static void showError(Alert.AlertType alertType, String text) {
+		Alert alert = new Alert(alertType, text);
+		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+		alert.getDialogPane().setMinWidth(500);
+		alert.showAndWait();
+	}
+	
 	private static void showError(String text) {
-		new Alert(Alert.AlertType.ERROR, text).showAndWait();
+		showError(Alert.AlertType.ERROR, text);
 	}
 	
 	/**
