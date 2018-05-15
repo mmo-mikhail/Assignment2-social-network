@@ -11,8 +11,15 @@ package users;
  */
 public class ChildProfile extends Profile {
 	
-	private AdultProfile parent2;
+	/**
+	 * first parent
+	 */
 	private AdultProfile parent1;
+	
+	/**
+	 * second parent
+	 */
+	private AdultProfile parent2;
 	
 	public ChildProfile(String name, int age, String status, 
 			String gender, String livingState,

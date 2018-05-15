@@ -32,37 +32,6 @@ public class Driver implements IDriver {
 		profileRepository.add(name, image, status, gender, age, state);
 	}
 
-//	/**
-//	 * get string of specific person's data
-//	 */
-//	public String displayPerson(Profile profile) {
-//		//write base data first
-//		String info = "Name:" + profile.getName() + "; "
-//				+ "Age:" + profile.getAge() + "; "
-//				+ "Status:" + profile.getStatus() + "; "
-//				+ "Image:" + profile.getImage() + "; ";
-//		
-//		if (profile instanceof AdultProfile) {
-//			//add data specific for adults
-//			AdultProfile adult = (AdultProfile)profile;
-//			if (adult.getSpouse() == null) {
-//				info += "Not Married; ";
-//			} else {
-//				info += "Spouse: " + adult.getSpouse().getName() + "; ";
-//				info += "Children: " + getDependantName(adult) + "; ";
-//			}
-//		} else {
-//			//add data specific for children
-//			info += "Parents: " + getNamesOfTheParents((ChildProfile)profile) + "; ";
-//		}
-//		//show friends at the end
-//		info += "Friends: ";
-//		for (Profile friend : profile.getAllFriends()) {
-//			info += friend.getName();
-//		}
-//		return info;
-//	}
-
 	/**
 	 * delete profile from storage
 	 * delete children if it adult and spouse if needed
@@ -73,7 +42,8 @@ public class Driver implements IDriver {
 		}
 		//otherwise it's Adult Profile
 		//so we delete all children first
-		ArrayList<ChildProfile> children = ((AdultProfile)profile).getChildren();
+		ArrayList<ChildProfile> children =
+				((AdultProfile)profile).getChildren();
 		boolean deleteChildrenSuccess = true;
 		int size = children.size();
 		for (int i = 0; i <size ; i++) {
@@ -81,8 +51,6 @@ public class Driver implements IDriver {
 				deleteChildrenSuccess = false;
 			}
 		}
-		//delete spouse
-//		((AdultProfile)profile).deleteSpouse();
 		
 		// and then delete main profile
 		//return true only when all profiles successfully deleted
@@ -95,9 +63,7 @@ public class Driver implements IDriver {
 	 * returns true only when child successfully completely deleted
 	 */
 	private boolean deleteChild(ChildProfile child) {
-		return profileRepository.delete(child.getName());
-//				&& child.getParent1().deleteChild(child)
-//				&& child.getParent2().deleteChild(child);		
+		return profileRepository.delete(child.getName());		
 	}
 
 	/**
@@ -138,7 +104,9 @@ public class Driver implements IDriver {
 		return profileRepository.getAll();
 	}
 
-
+	/**
+	 * set relation on selected profiles
+	 */
 	public void setRelation(Profile profile1, Profile profile2,
 			String relation)
 			throws NotToBeColleaguesException, NotToBeClassmatesException,
@@ -153,6 +121,9 @@ public class Driver implements IDriver {
 		}
 	}
 	
+	/**
+	 * set parental relation for profiles
+	 */
 	public void setParentalRelation(String childName,
 			String parent1, String parent2)
 			throws SQLException {
@@ -160,12 +131,16 @@ public class Driver implements IDriver {
 			profileRepository.setRelation(childName, parent2, "parent");
 	}
 
+	/**
+	 * returns true if relation can be created
+	 */
 	private boolean validateRelation(Profile profile1, Profile profile2,
 			String relation)
 			throws NotToBeColleaguesException, NotToBeClassmatesException,
 					NotToBeFriendsException, TooYoungException,
 					NotToBeCoupledException, NoAvailableException,
 					SQLException {
+		//check ages according to task
 		int age1 = profile1.getAge();
 		int age2 = profile2.getAge();
 		switch(relation) {
@@ -199,7 +174,7 @@ public class Driver implements IDriver {
 				return true;
 			case "parent":
 				// we don't need to check here because in this case
-				// only valid data can 
+				// only valid data can come
 				return true;
 		}
 		return false;
@@ -207,7 +182,7 @@ public class Driver implements IDriver {
 	
 	/**
 	 * helper
-	 * get only one person from each couple
+	 * return spouses separated by separator string
 	 */
 	public String[] getSpouses(String separator) {
 		return profileRepository.getSpouses(separator);

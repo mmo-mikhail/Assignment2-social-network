@@ -15,6 +15,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ * this class represents Add Person stage
+ */
 public class AddPerson extends SecondaryStage {
 	
 	/**
@@ -22,8 +26,12 @@ public class AddPerson extends SecondaryStage {
 	 */
 	static IDriver driver = new Driver();
 
+	/**
+	 * fill main gridpane for the stage
+	 */
 	@Override
 	public void show(GridPane gridPaneContainer) {
+		//create text fields
 		TextField tfName = new TextField();
 		TextField tfImage = new TextField();
 		TextField tfStatus = new TextField();
@@ -62,26 +70,41 @@ public class AddPerson extends SecondaryStage {
 		gridPaneContainer.add(btnOk, 0, 7);		
 	}
 
+	/**
+	 * @return close button text
+	 */
 	@Override
 	protected String getCloseButtonText() {
 		return "Cancel";
 	}
 
+	/**
+	 * close button indexes
+	 */
 	@Override
 	protected int[] closeIdxs() {
 		return new int[] {1,7};
 	}
 
+	/**
+	 * @return height of the stage
+	 */
 	@Override
 	protected double getHeight() {
 		return 450;
 	}
 
+	/**
+	 * @return width of the stage
+	 */
 	@Override
 	protected double getWidth() {
 		return 450;
 	}
 	
+	/**
+	 * try add new person and return false if one was not added
+	 */
 	private boolean addNewPerson(String name,
 			String image,
 			String status,
@@ -97,6 +120,7 @@ public class AddPerson extends SecondaryStage {
 			int age = Integer.parseInt(ageRaw);
 			
 			if (age > 16) {
+				//add adult
 				try {
 					driver.insertProfile(name, age, status, image, gender, livingState);
 				} catch (Exception e) {
@@ -105,6 +129,7 @@ public class AddPerson extends SecondaryStage {
 					return false;
 				}
 			} else {
+				//add child, but select parents first
 				String separator = ", ";
 				SelectParents sp = new SelectParents();
 				sp.setCouples(driver.getSpouses(separator));
@@ -130,6 +155,9 @@ public class AddPerson extends SecondaryStage {
 		return true;
 	}
 
+	/**
+	 * return true if input data is valid
+	 */
 	private boolean isInputInvalid(String name,
 			String image,
 			String status,
@@ -151,12 +179,18 @@ public class AddPerson extends SecondaryStage {
 					+ "\"SA\", \"TAS\", \"VIC\", \"WA\"");
 	}
 
+	/**
+	 * check if given state is valid
+	 */
 	private boolean isValidState(String livingState) {
 		String[] states = new String[]
 				{"ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"};
 		return Arrays.asList(states).contains(livingState);
 	}
 
+	/**
+	 * check if age is in permitted range
+	 */
 	private boolean isValidAge(String ageRaw) {
 		try {
 			int age = Integer.parseInt(ageRaw);
@@ -167,6 +201,10 @@ public class AddPerson extends SecondaryStage {
 		}
 	}
 
+	/**
+	 * just display error if condition is true
+	 * @return condition
+	 */
 	private boolean isInvalid(boolean condition, String errorText) {
 		if (condition) {
 			displayError(errorText);
@@ -174,7 +212,8 @@ public class AddPerson extends SecondaryStage {
 		return condition;
 	}
 	
-	public void displayError(String errorText) {
-		
-	}
+	/**
+	 * display error method. should be overriden
+	 */
+	public void displayError(String errorText) { }
 }

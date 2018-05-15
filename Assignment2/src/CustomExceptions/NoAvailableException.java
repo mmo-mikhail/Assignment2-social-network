@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NoAvailableException extends Exception {
 	public NoAvailableException() {
 		super("One of adult is already connected with"

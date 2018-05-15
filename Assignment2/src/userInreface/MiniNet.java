@@ -8,8 +8,7 @@ package userInreface;
 import java.sql.SQLException;
 
 import CustomExceptions.*;
-import driver.Driver;
-import driver.IDriver;
+import driver.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
@@ -20,9 +19,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import repository.Initializer;
-import users.AdultProfile;
-import users.ChildProfile;
-import users.Profile;
+import users.*;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
@@ -45,33 +42,43 @@ public class MiniNet extends Application {
 	 */
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {
-		String result = Initializer.Init();
-		if (result != null) {
-			showError(result);
-			return;
+		try {
+			//try init db
+			String result = Initializer.Init();
+			if (result != null) {
+				showError(result);
+				return;
+			}
+			if (Initializer.getLogs().length() > 1) {
+				//if any warnings available, display it
+				showError(Alert.AlertType.WARNING, Initializer.getLogs());
+			}
+			GridPane mainPain = initPane(); // Create a pane1
+			
+			//add all buttons here
+			setupMainPane(mainPain, primaryStage);
+			
+			// Create a scene and place it in the stage
+			Scene scene = new Scene(mainPain, 600, 450);
+			primaryStage.setTitle("Social Network"); // Set the stage title
+			primaryStage.setScene(scene); // Place the scene in the stage
+			primaryStage.show(); // Display the stage
+			
+			//close stage on pressing Exit button
+			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			    @Override
+			    public void handle(WindowEvent t) {
+			        System.exit(0);
+			    }
+			});
+		} catch (Exception e) {
+			showError("Fatal Error on inializing program");
 		}
-		if (Initializer.getLogs().length() > 1) {
-			showError(Alert.AlertType.WARNING, Initializer.getLogs());
-		}
-		GridPane mainPain = initPane(); // Create a pane1
-		
-		setupMainPane(mainPain, primaryStage);
-		
-		// Create a scene and place it in the stage
-		Scene scene = new Scene(mainPain, 600, 450);
-		primaryStage.setTitle("Social Network"); // Set the stage title
-		primaryStage.setScene(scene); // Place the scene in the stage
-		primaryStage.show(); // Display the stage
-		
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-		    @Override
-		    public void handle(WindowEvent t) {
-		        //Platform.exit();
-		        System.exit(0);
-		    }
-		});
 	}
 	
+	/**
+	 * @return main pane from root stage
+	 */
 	private GridPane initPane() {
 		GridPane pane = new GridPane();
 		pane.setAlignment(Pos.TOP_LEFT);
@@ -81,7 +88,11 @@ public class MiniNet extends Application {
 		return pane;
 	}
 	
+	/**
+	 * setup main pane
+	 */
 	private void setupMainPane(GridPane pane, Stage rootStage) {
+		//create buttons
 		Button btnShowAll = new Button("Show Everyone");
 		btnShowAll.setOnAction(e -> {
 			new SelectProfile(false).show(rootStage);
@@ -107,6 +118,7 @@ public class MiniNet extends Application {
 		btnDeleteProfile.setDisable(true);
 		btnDeleteProfile.setOnAction(e ->
 		{
+			//disable buttons when profile deleted
 			if (deleteProfile(selectedPerson)) {
 				btnDisplayProfile.setDisable(true);
 				btnDeleteProfile.setDisable(true);
@@ -128,6 +140,7 @@ public class MiniNet extends Application {
 		Button btnSelectPerson = new Button("Select Person");
 		btnSelectPerson.setOnAction(e ->
 		{
+			//show another stage to select person
 			SelectProfile sp = new SelectProfile(true);
 			sp.show(rootStage);			
 			if (sp.getSelectedProfile() == null) return;
@@ -135,11 +148,13 @@ public class MiniNet extends Application {
 			selectedPerson = sp.getSelectedProfile();
 			lbSelectedPerson.setText("Selected Person: "
 					+ selectedPerson.getName());
+			//enable disabled features
 			btnDisplayProfile.setDisable(false);
 			btnDeleteProfile.setDisable(false);
 			btnFindSubNames.setDisable(false);
 		});
 		
+		//add buttons to pane
 		pane.add(btnShowAll, 0, 0);
 		pane.add(btnAddNewPerson, 0, 1);
 		pane.add(btnSelectPerson, 0, 2);
@@ -150,6 +165,7 @@ public class MiniNet extends Application {
 		pane.add(btnDefineRelation, 0, 6);
 		pane.add(btnFindSubNames, 0, 7);
 		
+		//create and add Exit button
 		Button btnExit = new Button("Exit");
 		btnExit.setOnAction(e -> { 
 			rootStage.close();
@@ -157,6 +173,9 @@ public class MiniNet extends Application {
 		pane.add(btnExit, 0, 8);
 	}
 
+	/**
+	 * display sub names
+	 */
 	private void findSubNames() {
 		String text;
 		if (selectedPerson instanceof AdultProfile) {
@@ -171,6 +190,9 @@ public class MiniNet extends Application {
 		showError(AlertType.INFORMATION, text);
 	}
 
+	/**
+	 * show Add Person stage
+	 */
 	private void addNewPerson(Stage rootStage) {
 		AddPerson addHelper = new AddPerson() {
 			@Override
@@ -181,7 +203,11 @@ public class MiniNet extends Application {
 		addHelper.show(rootStage);
 	}
 	
+	/**
+	 * show stages to define relations
+	 */
 	private void defineRelation(Stage rootStage) {
+		//diplsay stages to select profiles
 		SelectProfile sp1 = new SelectProfile(true);
 		sp1.show(rootStage);			
 		if (sp1.getSelectedProfile() == null) return;
@@ -196,6 +222,7 @@ public class MiniNet extends Application {
 			return;
 		}
 		
+		//after 2 profiles selected, select relation
 		SelectRelation relationWindow = new SelectRelation();
 		relationWindow.show(rootStage);
 		if (relationWindow.getRelation() == null) return;
@@ -207,6 +234,7 @@ public class MiniNet extends Application {
 		} catch (NotToBeColleaguesException | NotToBeClassmatesException
 				| NotToBeFriendsException | TooYoungException
 				| NotToBeCoupledException | NoAvailableException e) {
+			//show specific error message
 			showError(e.getMessage());
 		} catch (SQLException e) {
 			showError("DB error occured");
@@ -215,7 +243,11 @@ public class MiniNet extends Application {
 		}
 	}
 
+	/**
+	 * display whether 2 people directly connected
+	 */
 	private void areTwoConnected(Stage rootStage) {
+		//diplsay stages to select profiles
 		SelectProfile sp1 = new SelectProfile(true);
 		sp1.show(rootStage);			
 		if (sp1.getSelectedProfile() == null) return;
@@ -224,6 +256,7 @@ public class MiniNet extends Application {
 		sp2.show(rootStage);			
 		if (sp2.getSelectedProfile() == null) return;
 		
+		//after 2 profiles selected, get connection info
 		boolean isConnected = driver.isDirectlyConnected(
 				sp1.getSelectedProfile(),
 				sp2.getSelectedProfile());
@@ -235,10 +268,17 @@ public class MiniNet extends Application {
 		showError(AlertType.INFORMATION, text);
 	}
 
+	/**
+	 * delete profile
+	 * @return true if deleted successfully
+	 */
 	private boolean deleteProfile(Profile profile) {
 		return driver.deletePerson(profile);
 	}
 	
+	/**
+	 * shows alert dialog with given alert type
+	 */
 	private static void showError(Alert.AlertType alertType, String text) {
 		Alert alert = new Alert(alertType, text);
 		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -246,6 +286,9 @@ public class MiniNet extends Application {
 		alert.showAndWait();
 	}
 	
+	/**
+	 * shows error dialog
+	 */
 	private static void showError(String text) {
 		showError(Alert.AlertType.ERROR, text);
 	}

@@ -20,6 +20,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import users.Profile;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ * this class represents Select Parents stage
+ */
 public class SelectProfile extends SecondaryStage {
 	
 	/**
@@ -32,12 +36,18 @@ public class SelectProfile extends SecondaryStage {
 	 */
 	Profile selectedPerson = null; // selected person
 	
+	/**
+	 * is profile selectable
+	 */
 	private boolean isProfileSelectable;
 	
 	public SelectProfile(boolean isProfileSelectable) {
 		this.isProfileSelectable = isProfileSelectable;
 	}
 
+	/**
+	 * return prepared data for table
+	 */
 	private ObservableList<String[]> generateData(List<Profile> profiles) {
 		ObservableList<String[]> list = FXCollections.observableArrayList();
 		for (Profile profile : profiles) {
@@ -52,16 +62,24 @@ public class SelectProfile extends SecondaryStage {
 		return list;
 	}
 	
+	/**
+	 * @return selected profile
+	 */
 	public Profile getSelectedProfile() {
 		return selectedPerson;
 	}
 
+	/**
+	 * fill main grid pane for the stage
+	 */
 	@Override
 	protected void show(GridPane gridPaneContainer) {
+		//create table
 		TableView<String[]> tb = new TableView<>();
 		gridPaneContainer.add(tb, 1, 3);  		
   		tb.setEditable(false);
   		
+  		//create columns
   		TableColumn<String[], String> tc1 = new TableColumn<>("Name");
   		tc1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()[0]));
   		TableColumn<String[], String> tc2 = new TableColumn<>("Status");
@@ -72,20 +90,23 @@ public class SelectProfile extends SecondaryStage {
   		tc4.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()[3]));
   		TableColumn<String[], String> tc5 = new TableColumn<>("State");
   		tc5.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()[4]));
-
+  		
+  		//add columns
   		tb.getColumns().add(tc1);
   		tb.getColumns().add(tc2);
   		tb.getColumns().add(tc3);
   		tb.getColumns().add(tc4);
   		tb.getColumns().add(tc5);
   		
+  		//fill table with data
 		List<Profile> profiles = driver.getAllProfiles();
   		tb.setItems(generateData(profiles));
 		
-  		if(isProfileSelectable) {
+  		if (isProfileSelectable) {
   			Label lbSelectedPerson =
   					new Label("Please Select Person");
   			gridPaneContainer.add(lbSelectedPerson, 1, 2);
+  			//add on row click even
   			tb.setRowFactory(tv -> {
   				TableRow<String[]> row = new TableRow<>();
   				row.setOnMouseClicked(event -> {
@@ -93,6 +114,7 @@ public class SelectProfile extends SecondaryStage {
   							|| event.getButton() != MouseButton.PRIMARY) {
   						return;
   					}
+  					//select profile
   					selectedPerson = profiles.get(row.getIndex());
   					lbSelectedPerson.setText("Selected Person: "
   							+ selectedPerson.getName());
@@ -102,11 +124,17 @@ public class SelectProfile extends SecondaryStage {
   		}
 	}
 	
+	/**
+	 * @return height of the stage
+	 */
 	@Override
 	protected double getHeight() {
 		return 450;
 	}
 
+	/**
+	 * @return width of the stage
+	 */
 	@Override
 	protected double getWidth() {
 		return 450;

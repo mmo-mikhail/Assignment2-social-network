@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NotToBeCoupledException extends Exception {
 	public NotToBeCoupledException() {
 		super("Only adults can have couple relation");	

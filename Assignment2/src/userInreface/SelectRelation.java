@@ -10,10 +10,20 @@ import javafx.scene.layout.GridPane;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ * this class represents simple Select Relation stage
+ */
 public class SelectRelation extends SecondaryStage {
 	
+	/**
+	 * just simple combo box
+	 */
 	ComboBox<String> comboBox = new ComboBox<>();
 	
+	/**
+	 * @return selected relation
+	 */
 	public String getRelation() {
 		try {
 			return comboBox.getSelectionModel().getSelectedItem().toString();
@@ -23,6 +33,9 @@ public class SelectRelation extends SecondaryStage {
 		}
 	}
 
+	/**
+	 * fill main gridpane for the stage
+	 */
 	@Override
 	protected void show(GridPane paneWrapper) {
 		ObservableList<String> options = 

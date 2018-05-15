@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NotToBeFriendsException extends Exception {
 	public NotToBeFriendsException() {
 		super("An adult and a child cannot be friends "

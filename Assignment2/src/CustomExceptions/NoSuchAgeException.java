@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NoSuchAgeException extends Exception {
 	public NoSuchAgeException() {
 		super("Age can be from 1 to 150 years only");	

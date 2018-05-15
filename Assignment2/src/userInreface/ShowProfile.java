@@ -11,6 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import users.Profile;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ * this class represents stage to display full info about profile
+ */
 public class ShowProfile extends SecondaryStage {
 	
 	/**
@@ -22,8 +26,12 @@ public class ShowProfile extends SecondaryStage {
 		this.profile = profile;
 	}
 
+	/**
+	 * fill main gridpane for the stage
+	 */
 	@Override
 	protected void show(GridPane gridPaneContainer) {
+		//init labels
 		String labelStyle = "-fx-font-size: 14px; -fx-font-weight: bold;";
 		Label lbName = new Label(profile.getName());
 		lbName.setStyle(labelStyle); 
@@ -51,6 +59,7 @@ public class ShowProfile extends SecondaryStage {
 		gridPaneContainer.add(new Label("Living State:"), 0, 5);
 		gridPaneContainer.add(lbState, 1, 5);
 		
+		//try add image if exists
 		if (profile.getImage() != null && !profile.getImage().equals("")
 				&& new File("images/" + profile.getImage()).exists()) {
 			
@@ -67,18 +76,27 @@ public class ShowProfile extends SecondaryStage {
 		}
 	}
 	
+	/**
+	 * @return height of the stage
+	 */
 	@Override
 	protected double getHeight() {
 		return 300;
 	}
 
+	/**
+	 * @return width of the stage
+	 */
 	@Override
 	protected double getWidth() {
 		return 300;
 	}
 	
+	/**
+	 * close button indexes
+	 */
 	@Override
 	protected int[] closeIdxs() {
-		return new int[] {0,7};
+		return new int[] {0, 7};
 	}
 }

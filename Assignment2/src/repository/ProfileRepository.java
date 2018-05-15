@@ -31,9 +31,11 @@ public class ProfileRepository {
 							Initializer.dbName,
 							Initializer.userName, Initializer.userPass);
 			Statement stmt = con.createStatement();
+			//select all profiles
 			ResultSet rs = stmt.executeQuery("select * from Profiles");
 			List<Profile> allProfiles = new ArrayList<Profile>();
 			while (rs.next()) {
+				//read each row
 				String name = rs.getString("Name");
 				String image = rs.getString("Image");
 				String status = rs.getString("Status");
@@ -43,10 +45,12 @@ public class ProfileRepository {
 				
 				Profile profile = null;
 				if (age > 16) {
+					//add adult and fill children
 					profile = new AdultProfile(name, age, status, gender, state);
 					fillChildren((AdultProfile)profile, stmt);
 				}
 				else {
+					//add children and add parents
 					String[] parents = getParents(name);
 					AdultProfile parent1 = (AdultProfile)getProfile(parents[0]);
 					AdultProfile parent2 = (AdultProfile)getProfile(parents[1]);
@@ -67,10 +71,10 @@ public class ProfileRepository {
 		return null;	
 	}
 	
-	public Profile getProfile(String Name) {
-		return getProfile(Name, true);
-	}
 	
+	/**
+	 * get profile by name
+	 */
 	public Profile getProfile(String Name, boolean fillChildren) {
 		try {
 			Connection con =
@@ -112,6 +116,10 @@ public class ProfileRepository {
 	}
 	
 	
+	/**
+	 * add children to DB due to relations from DB
+	 * @throws SQLException
+	 */
 	private void fillChildren(AdultProfile profile, Statement stmt)
 			throws SQLException {
 		ResultSet rs = stmt.executeQuery("select CASEWHEN("
@@ -126,6 +134,11 @@ public class ProfileRepository {
 		}
 	}
 
+	/**
+	 * @param Name
+	 * @return parent's name array
+	 * @throws NoParentException
+	 */
 	public String[] getParents(String Name) throws NoParentException {	
 		try {
 			Connection con =
@@ -209,6 +222,9 @@ public class ProfileRepository {
 		return false;
 	}
 
+	/**
+	 * find out if 2 people directly connected
+	 */
 	public boolean isDirectlyConnected(String name1, String name2) {
 		try {
 			Statement stmt = DriverManager.getConnection(
@@ -226,6 +242,9 @@ public class ProfileRepository {
 		return false;
 	}
 	
+	/**
+	 * find out if couple allowed
+	 */
 	public boolean coupleAllowed(String name1, String name2)
 			throws SQLException {
 		Statement stmt = DriverManager.getConnection(
@@ -235,10 +254,14 @@ public class ProfileRepository {
 		return coupleAllowed(name1, name2, stmt);
 	}
 	
+	/**
+	 * try to find another couple when at least one spouse is part
+	 * of other couple
+	 * returns true when no element found
+	 */
 	public boolean coupleAllowed(String name1, String name2,
 			Statement stmt) throws SQLException {
-		// try to find another couple when at least one spouse is part
-		// of other couple
+		// 
 		ResultSet rs = stmt.executeQuery( 
 				"select distinct * from relations \r\n" + 
 				"where relation = 'couple' and (\r\n" + 
@@ -246,9 +269,13 @@ public class ProfileRepository {
 				"'" + name1 + "' = secondprofile or \r\n" + 
 				"'" + name2 + "' = firstprofile or \r\n" + 
 				"'" + name2 + "' = secondprofile  )");		
-		return !rs.next(); //returns true when no element found
+		return !rs.next();
 	}
 
+	/**
+	 * add new relation to DB
+	 * return true if successful
+	 */
 	public boolean setRelation(String name1, String name2, String relation) {
 		try {
 			Statement stmt = DriverManager.getConnection(
@@ -263,6 +290,9 @@ public class ProfileRepository {
 		return false;
 	}
 	
+	/**
+	 * create new relation
+	 */
 	public void setRelation(String name1, String name2, String relation,
 			Statement stmt) throws SQLException {
 		stmt.executeUpdate("INSERT INTO public.Relations VALUES ('"
@@ -271,6 +301,9 @@ public class ProfileRepository {
 				+ relation + "')");
 	}
 
+	/**
+	 * return spouses separated by separator
+	 */
 	public String[] getSpouses(String separator) {
 		try {
 			Statement stmt = DriverManager.getConnection(
@@ -292,5 +325,12 @@ public class ProfileRepository {
 			e.printStackTrace(System.out);
 		}
 		return null;
+	}
+	
+	/**
+	 * return profile by name
+	 */
+	private Profile getProfile(String Name) {
+		return getProfile(Name, true);
 	}
 }

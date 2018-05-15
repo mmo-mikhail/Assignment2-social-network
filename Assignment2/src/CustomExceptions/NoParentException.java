@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NoParentException extends Exception {
 	
 	public NoParentException() {

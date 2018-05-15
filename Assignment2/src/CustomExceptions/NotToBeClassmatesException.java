@@ -5,6 +5,9 @@
  */
 package CustomExceptions;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ */
 public class NotToBeClassmatesException extends Exception {
 	public NotToBeClassmatesException() {
 		super("Young child cannot have classmate relation");	

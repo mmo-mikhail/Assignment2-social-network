@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 public class AdultProfile extends Profile {
 
+	/**
+	 * children list of the current adult
+	 */
 	ArrayList<ChildProfile> children = new ArrayList<ChildProfile>();
 	
 	public AdultProfile(String name, int age, String status,

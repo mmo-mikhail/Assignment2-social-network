@@ -11,18 +11,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author s3419069 (Mykhailo Muzyka)
+ * Represents the main db initializer
+ */
 public class Initializer {
 
 	public final static String dbName = "jdbc:hsqldb:db\\socialNetwork;hsqldb.write_delay=false;";
 	public final static String userName = "SA";
 	public final static String userPass = "123";
 	
+	/**
+	 * warning logs are stored here
+	 */
 	static String logs = "";
 	
-	// The name of the people file to open.
+	/**
+	 * The name of the people file to open
+	 */
 	final static String peopleFileName = "people.txt";
 
-	// The name of the relationship file to open.
+	/**
+	 * The name of the relationship file to open
+	 */
 	final static String relationshipsFileName = "relations.txt";
 
 	/**
@@ -32,8 +43,12 @@ public class Initializer {
 			new ProfileRepository();
 	
 	private Initializer() {
+		
 	}
 
+	/**
+	 * main enter method to create/update DB if needed
+	 */
 	public static String Init() {
 		if (!checkClassPath()) {
 			return "DB Error: Try add hsqldb.jar to classpath";
@@ -53,6 +68,9 @@ public class Initializer {
 		return null;
 	}
 
+	/**
+	 * returns true if class path added
+	 */
 	private static boolean checkClassPath() {
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver");
@@ -62,8 +80,12 @@ public class Initializer {
 		return true;
 	}
 
+	/**
+	 * check if DB exists
+	 */
 	private static boolean isDbExists() {
 		try {
+			//get connection only if db exists
 			Connection con =
 					DriverManager.getConnection(
 							dbName + ";ifexists=true", userName, userPass);
@@ -77,11 +99,16 @@ public class Initializer {
 		return true;
 	}
 
+	/**
+	 * update DB
+	 * returns error message if available and null if no error happened
+	 */
 	private static String updateDb() {
 		try {
 			Connection con =
 					DriverManager.getConnection(dbName, userName, userPass);
 			Statement stmt = con.createStatement();
+			//recreate schema below
 			stmt.executeUpdate(
 					"DROP TABLE IF EXISTS Relations;"
 					+ "DROP TABLE IF EXISTS Profiles;"
@@ -103,13 +130,17 @@ public class Initializer {
 					+ "public.Profiles(Name),\r\n"
 					+ "Foreign key(secondProfile) references "
 					+ "public.Profiles(Name));");
+			//try insert peoples
 			if (!readPeopleFile(stmt)) {
 				return "Unexpected Error: 'people.txt' file is corrupted";
 			}
+			//try insert relations
 			if (!readRelashionsFile(stmt)) {
 				return "Unexpected Error: 'relations.txt' file is corrupted";
 			}
+			//delete profiles due to specific constraints
 			deleteWrongProfiles(stmt);
+			//to verify that changes saved
 			con.commit();
 			con.close();
 		} catch (Exception e) {
@@ -119,10 +150,14 @@ public class Initializer {
 		return null;
 	}
 
+	/**
+	 * delete profiles due to specific constraints using given Statement
+	 */
 	private static void deleteWrongProfiles(Statement stmt)
 			throws SQLException {
 		
-		//simple query below retrieves names of children who don't have two parents. 
+		// simple query below retrieves names of children who
+		// don't have two parents. 
 		ResultSet rs = stmt.executeQuery(
 				"select Name from public.Profiles \r\n" + 
 				"where age < 16 and (\r\n" + 
@@ -150,6 +185,9 @@ public class Initializer {
 				+ String.join(System.lineSeparator(), profilesDeleted));
 	}
 
+	/**
+	 * read and update relations from file
+	 */
 	private static boolean readRelashionsFile(Statement stmt) {
 		try {
 			// FileReader reads text files in the default encoding.
@@ -183,6 +221,9 @@ public class Initializer {
 		return true;
 	}
 
+	/**
+	 * returns true if relation is valid
+	 */
 	private static boolean isValidRelation(String[] values,
 			Statement stmt, String line)
 			throws SQLException {
@@ -193,6 +234,7 @@ public class Initializer {
 			addLogs(warningLine + "same names");
 			return false;
 		}
+		//check age constraints due to the assignment
 		int age1 = getAge(name1, stmt);
 		int age2 = getAge(name2, stmt);
 		switch(values[2].trim()) {
@@ -250,8 +292,9 @@ public class Initializer {
 		return true;
 	}
 
-	
-
+	/**
+	 * return age of person from DB
+	 */
 	private static int getAge(String name, Statement stmt)
 			throws SQLException {
 		ResultSet rs = stmt.executeQuery(
@@ -261,6 +304,9 @@ public class Initializer {
 		return rs.getInt(1);
 	}
 
+	/**
+	 * check if person exists in DB
+	 */
 	private static boolean isNameExist(String name, Statement stmt)
 			throws SQLException {
 		ResultSet rs = stmt.executeQuery(
@@ -274,9 +320,15 @@ public class Initializer {
 		return true;
 	}
 
+	/**
+	 * list of valid states
+	 */
 	private static String[] validStates =
 			new String[] {"ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC","WA"};
 	
+	/**
+	 * read people file and try add to DB
+	 */
 	private static boolean readPeopleFile(Statement stmt) {
 		try {
 			// FileReader reads text files in the default encoding.
@@ -285,12 +337,14 @@ public class Initializer {
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
+				//read each line
 				line = line.replace("“", "").replace("”", "")
 						.replace("\"", "");
 				String[] values = line.split(",");
 				if (!validatePerson(values)) {
 					continue;
 				}
+				//add to DB
 				profileRepository.add(
 						values[0].trim(),
 						values[1].trim(),
@@ -308,6 +362,9 @@ public class Initializer {
 		return true;
 	}
 	
+	/**
+	 * return true if given person is valid 
+	 */
 	private static boolean validatePerson(String[] values) {
 		if (values.length == 1) {
 			addLogs("people.txt content error: " + values[0]
@@ -332,30 +389,17 @@ public class Initializer {
 		return true;
 	}
 
+	/**
+	 * add warning logs
+	 */
 	private static void addLogs(String text) {
 		logs += text + " (current line will be skipped)" + System.lineSeparator();
 	}
 	
+	/**
+	 * return warning logs
+	 */
 	public static String getLogs() {
 		return logs;
 	}
 }
-
-/*
- CREATE TABLE Profiles ( id INT NOT NULL, Name VARCHAR(100) NOT NULL, Status
- VARCHAR(100) NOT NULL, Image VARCHAR(100) NOT NULL, Gender VARCHAR(100) NOT
- NULL, Age VARCHAR(100) NOT NULL, LivingState VARCHAR(100) NOT NULL, PRIMARY
- KEY (id)); CREATE TABLE Relations ( FirstProfileId INT NOT NULL,
- SecondProfileId INT NOT NULL, Relation VARCHAR(50) NOT NULL, Primary
- key(firstProfileId, secondProfileId), Foreign key(firstProfileId) references
- public.Profiles(id), Foreign key(secondProfileId) references
-public.Profiles(id));
-
-
-select Name from public.Profiles
-where age < 16 and (
- 2 <> (select count(*) from public.Relations where relation = 'parent' and FirstProfile = Profiles.Name) and
- 2 <> (select count(*) from public.Relations where relation = 'parent' and SecondProfile = Profiles.Name) and
- ( 1 <> (select count(*) from public.Relations where relation = 'parent' and FirstProfile = Profiles.Name) and
-   1 <> (select count(*) from public.Relations where relation = 'parent' and SecondProfile = Profiles.Name) ) )
-*/
