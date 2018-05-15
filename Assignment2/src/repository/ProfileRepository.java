@@ -17,7 +17,8 @@ import users.*;
 
 /**
  * @author s3419069 (Mykhailo Muzyka)
- *	this class represents Data Access Layer. Here we can refer to other resources to get data such as DB
+ * This class represents Data Access Layer.
+ * Here we can refer to other resources to get data such as DB
  */
 public class ProfileRepository {
 	
@@ -46,24 +47,26 @@ public class ProfileRepository {
 				Profile profile = null;
 				if (age > 16) {
 					//add adult and fill children
-					profile = new AdultProfile(name, age, status, gender, state);
+					profile = new AdultProfile(name, age, status,
+							gender, state);
 					fillChildren((AdultProfile)profile, stmt);
 				}
 				else {
 					//add children and add parents
 					String[] parents = getParents(name);
-					AdultProfile parent1 = (AdultProfile)getProfile(parents[0]);
-					AdultProfile parent2 = (AdultProfile)getProfile(parents[1]);
+					AdultProfile par1 = (AdultProfile)getProfile(parents[0]);
+					AdultProfile par2 = (AdultProfile)getProfile(parents[1]);
 					
-					profile = new ChildProfile(name, age, status, image, gender, state,
-							parent1.getGender() == "F"
-								? parent1 : parent2,
-							parent2.getGender() == "M"
-								? parent2 : parent1);
+					profile = new ChildProfile(name, age, status,
+							image, gender, state,
+							par1.getGender() == "F"
+								? par1 : par2,
+							par2.getGender() == "M"
+								? par2 : par1);
 				}
 				allProfiles.add(profile);
 			}
-			System.out.println(allProfiles.size());
+			con.close();
 			return allProfiles;
 		} catch (Exception e) { }
 		return null;	
@@ -157,7 +160,8 @@ public class ProfileRepository {
 			parents[0] = rs.getString(1);
 			if (!rs.next()) throw new NoParentException(Name + "has no parent");
 			parents[1] = rs.getString(1);
-			
+
+			con.close();
 			return parents;
 		} catch (Exception e) {
 			throw new NoParentException(Name + "has no parent");
@@ -188,11 +192,12 @@ public class ProfileRepository {
 	public void add(String name, String image, String status, String gender,
 			int age, String state)
 			throws SQLException {
-		Statement stmt = DriverManager.getConnection(
+		 Connection con = DriverManager.getConnection(
 				Initializer.dbName,
-				Initializer.userName, Initializer.userPass)
-				.createStatement();
-		add(name, image, status, gender, String.valueOf(age), state, stmt);
+				Initializer.userName, Initializer.userPass);
+		 Statement stmt = con.createStatement();
+		 add(name, image, status, gender, String.valueOf(age), state, stmt);
+		 con.close();
 	}
 	
 	/**
@@ -201,16 +206,17 @@ public class ProfileRepository {
 	 */
 	public Boolean delete(String name) {
 		try {
-			Statement stmt = DriverManager.getConnection(
+			Connection con = DriverManager.getConnection(
 					Initializer.dbName,
-					Initializer.userName, Initializer.userPass)
-					.createStatement();
+					Initializer.userName, Initializer.userPass);
+			Statement stmt = con.createStatement();
 			stmt.executeUpdate("delete from public.Relations "
 					+ "where FirstProfile ='" + name + "'");
 			stmt.executeUpdate("delete from public.Relations "
 					+ "where SecondProfile ='" + name + "'");
 			stmt.executeUpdate("delete from public.Profiles "
 					+ "where Name ='" + name + "'");				
+			con.close();
 			return true;
 		} catch (Exception e) {
 			return false;

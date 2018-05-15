@@ -46,9 +46,6 @@ public abstract class SecondaryStage {
 		});
   		stage.setOnCloseRequest(we -> {
   			closeStage();
-  			//"Proper messages are shown on the command-line console
-  			//to reflect frontend GUI operations"
-  			System.out.println("Window " + stageTitle() + " closed");
   		});
   		everyonePane.add(btnClose, closeIdxs()[0], closeIdxs()[1]);
 
@@ -102,6 +99,9 @@ public abstract class SecondaryStage {
 	protected void closeStage() {
 		stage.close(); //hide current stage
 		rootStage.show(); //display root one instead
+		//"Proper messages are shown on the command-line console
+		//to reflect frontend GUI operations"
+		System.out.println("Window " + stageTitle() + " closed");
 	}
 	
 	/**

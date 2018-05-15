@@ -46,10 +46,11 @@ public class SelectProfile extends SecondaryStage {
 	}
 
 	/**
-	 * return prepared data for table
+	 * @return prepared data for table
 	 */
 	private ObservableList<String[]> generateData(List<Profile> profiles) {
 		ObservableList<String[]> list = FXCollections.observableArrayList();
+		if (profiles == null) return list;
 		for (Profile profile : profiles) {
 			list.add(new String [] {
   					profile.getName(),

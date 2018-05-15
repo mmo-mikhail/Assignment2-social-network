@@ -148,7 +148,7 @@ public class Driver implements IDriver {
 				if (age1 > 16 && age2 > 16) return true;
 				throw new NotToBeColleaguesException();
 			case "classmates":
-				if (age1 <= 2 || age2 <= 2) return true;
+				if (age1 > 2 && age2 > 2) return true;
 				throw new NotToBeClassmatesException ();
 			case "friends":
 				if (age1 <= 16 && age2 > 16 || age2 <= 16 && age1 > 16) {
@@ -171,10 +171,6 @@ public class Driver implements IDriver {
 						profile2.getName())) {
 					throw new NoAvailableException();
 				}
-				return true;
-			case "parent":
-				// we don't need to check here because in this case
-				// only valid data can come
 				return true;
 		}
 		return false;
