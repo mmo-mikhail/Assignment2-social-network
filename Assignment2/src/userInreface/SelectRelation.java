@@ -6,6 +6,7 @@
 package userInreface;
 
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
@@ -46,7 +47,8 @@ public class SelectRelation extends SecondaryStage {
   			        "colleagues"
   			    );
   		comboBox.setItems(options);
-  		paneWrapper.add(comboBox, 1, 2);	
+  		paneWrapper.add(new Label("Please select relation below:"), 1, 2);
+  		paneWrapper.add(comboBox, 1, 3);	
 	}
 	
 	/**

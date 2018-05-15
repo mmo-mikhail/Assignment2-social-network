@@ -65,9 +65,7 @@ public class ProfileRepository {
 			}
 			System.out.println(allProfiles.size());
 			return allProfiles;
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-		}
+		} catch (Exception e) { }
 		return null;	
 	}
 	
@@ -110,9 +108,8 @@ public class ProfileRepository {
 						state, parent1, parent2);
 			}
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			return null;
 		}
-		return null;	
 	}
 	
 	
@@ -163,9 +160,8 @@ public class ProfileRepository {
 			
 			return parents;
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			throw new NoParentException(Name + "has no parent");
 		}
-		throw new NoParentException(Name + "has no parent");
 	}
 	
 	/**
@@ -217,9 +213,8 @@ public class ProfileRepository {
 					+ "where Name ='" + name + "'");				
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -237,9 +232,8 @@ public class ProfileRepository {
 					+ name2 + "' and SecondProfile ='" + name1 + "')");
 			return rs.next();
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			return false;
 		}
-		return false;
 	}
 	
 	/**
@@ -285,9 +279,8 @@ public class ProfileRepository {
 			setRelation(name1, name2, relation, stmt);
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			return false; 
 		}
-		return false;
 	}
 	
 	/**
@@ -322,9 +315,8 @@ public class ProfileRepository {
 			String[] stockArr = new String[couples.size()];
 			return couples.toArray(stockArr);
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
+			return null;
 		}
-		return null;
 	}
 	
 	/**

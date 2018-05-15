@@ -84,7 +84,7 @@ public class Driver implements IDriver {
 			//go though each child
 			//do not type | symbol at the end
 			totalNames += children.get(i).getName()
-					+ ((i + 1 == children.size()) ? "" : "| "); 
+					+ ((i + 1 == children.size()) ? "" : ", "); 
 		}
 		return totalNames;
 	}

@@ -94,7 +94,6 @@ public class Initializer {
 			if (e.getMessage().contains("Database does not exists")) {
 				return false;
 			}
-			e.printStackTrace(System.out);
 		}
 		return true;
 	}
@@ -144,7 +143,6 @@ public class Initializer {
 			con.commit();
 			con.close();
 		} catch (Exception e) {
-			e.printStackTrace(System.out);
 			return "DB Error: Cannot Access Database!";
 		}
 		return null;
@@ -214,8 +212,6 @@ public class Initializer {
 			// Always close files.
 			bufferedReader.close();
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
-			// System.out.println(e.getMessage());
 			return false;
 		}
 		return true;
@@ -356,7 +352,6 @@ public class Initializer {
 			// Always close files.
 			bufferedReader.close();
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
 			return false;
 		}
 		return true;

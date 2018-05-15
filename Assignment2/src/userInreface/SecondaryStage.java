@@ -87,7 +87,7 @@ public abstract class SecondaryStage {
 	 * @return width of the stage
 	 */
 	protected double getWidth() {
-		return 200;
+		return 250;
 	}
 	
 	/**

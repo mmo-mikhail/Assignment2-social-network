@@ -7,7 +7,7 @@ package userInreface;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -30,11 +30,16 @@ public class SelectParents extends SecondaryStage {
 	 * @return selected parents
 	 */
 	public String selectedParents() {
-		return comboBox.getSelectionModel().getSelectedItem().toString();
+		try {
+			return comboBox.getSelectionModel().getSelectedItem().toString();
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
-	 * set couplse
+	 * set couples
 	 */
 	public void setCouples(String[] spouses) {
 		couples = spouses;
@@ -48,6 +53,15 @@ public class SelectParents extends SecondaryStage {
 		ObservableList<String> options = 
   			    FXCollections.observableArrayList(couples);
   		comboBox.setItems(options);
-  		paneWrapper.add(comboBox, 1, 2);	
+  		paneWrapper.add(new Label("Please select parents below:"), 1, 2);
+  		paneWrapper.add(comboBox, 1, 3);	
+	}
+	
+	/**
+	 * @return Stage title
+	 */
+	@Override
+	protected String stageTitle() {
+		return "Select Parents";
 	}
 }

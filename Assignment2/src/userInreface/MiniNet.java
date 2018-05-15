@@ -225,7 +225,10 @@ public class MiniNet extends Application {
 		//after 2 profiles selected, select relation
 		SelectRelation relationWindow = new SelectRelation();
 		relationWindow.show(rootStage);
-		if (relationWindow.getRelation() == null) return;
+		if (relationWindow.getRelation() == null) {
+			showError("Please select relation");
+			return;
+		};
 		try {
 			driver.setRelation(
 					sp1.getSelectedProfile(),
