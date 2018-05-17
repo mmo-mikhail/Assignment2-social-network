@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
-package userInterface;
+
 
 import java.sql.SQLException;
 
@@ -19,6 +19,10 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import repository.Initializer;
+import userInterface.AddPerson;
+import userInterface.SelectProfile;
+import userInterface.SelectRelation;
+import userInterface.ShowProfile;
 import users.*;
 
 /**

@@ -1,0 +1,11 @@
+Alex Smith, “”, “student at RMIT”, M, 21, WA
+Ben Turner, “BenPhoto.jpg”, “manager at Coles”, M, 35, VIC
+Hannah White, “Hannah.png”, “student at PLC”, F, 14, VIC
+Zoe Foster, “”, “Founder of ZFX”, F, 28, VIC
+Mark Turner, “Mark.jpg”, “”, M, 2, VIC
+New Man, “”, “test Status”, M, 3, WA
+9 old child, “”, “test Status”, M, 9, WA
+12 old std, “”, “test studetn", M, 12, WA
+Michael, “”, “test Status”, M, 17, VIC
+Kate Katty, “”, “test Status”, F, 98, WA
+Marry Marry, “”, “teacher”, F, 50, WA

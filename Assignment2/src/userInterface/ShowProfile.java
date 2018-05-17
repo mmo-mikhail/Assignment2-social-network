@@ -90,7 +90,7 @@ public class ShowProfile extends SecondaryStage {
 	 */
 	@Override
 	protected double getHeight() {
-		return 300;
+		return 400;
 	}
 
 	/**
