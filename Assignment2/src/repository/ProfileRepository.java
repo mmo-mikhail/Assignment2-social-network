@@ -326,9 +326,34 @@ public class ProfileRepository {
 	}
 	
 	/**
-	 * return profile by name
+	 * get profile object filling children for adults
+	 * @return profile by name
 	 */
 	private Profile getProfile(String Name) {
 		return getProfile(Name, true);
+	}
+
+	/**
+	 * get friendship connection
+	 * @return connection list
+	 * @throws SQLException
+	 */
+	public List<String[]> getFriendship()
+			throws SQLException {
+			Statement stmt = DriverManager.getConnection(
+					Initializer.dbName,
+					Initializer.userName, Initializer.userPass)
+					.createStatement();
+			//select only couples
+			ResultSet rs = stmt.executeQuery(
+					"select * from relations where relation = 'friends'");
+			if (!rs.next()) return null; //when no friends found
+			
+			//creating friends list
+			List<String[]> friends = new ArrayList<>();
+			do {
+				friends.add(new String[] { rs.getString(1), rs.getString(2) });
+			} while (rs.next());
+			return friends;
 	}
 }

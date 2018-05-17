@@ -30,7 +30,7 @@ public interface IDriver {
 	
 	List<Profile> getAllProfiles(); 
 
-	void setRelation(Profile selectedProfile, Profile selectedProfile2,
+	void setRelation(Profile selectedProfile1, Profile selectedProfile2,
 			String relation)
 			throws NotToBeColleaguesException, NotToBeClassmatesException,
 			NotToBeFriendsException, TooYoungException,
@@ -41,4 +41,7 @@ public interface IDriver {
 	
 	//helpers
 	String[] getSpouses(String separator);
+
+	String[] getFriendsChain(Profile selectedProfile1, Profile selectedProfile2)
+			throws SQLException;
 }

@@ -178,9 +178,38 @@ public class Driver implements IDriver {
 	
 	/**
 	 * helper
-	 * return spouses separated by separator string
+	 * @return spouses separated by separator string
 	 */
 	public String[] getSpouses(String separator) {
 		return profileRepository.getSpouses(separator);
+	}
+
+	/**
+	 * finding friends of friends
+	 * @return names people in connection chain array
+	 * @throws SQLException 
+	 */
+	public String[] getFriendsChain(
+			Profile selectedProfile1, Profile selectedProfile2)
+			throws SQLException {
+		List<String[]> connections = profileRepository.getFriendship();
+		if (connections == null) {
+			return null;
+		}
+		String name1 = selectedProfile1.getName();
+		String name2 = selectedProfile2.getName();
+		
+		ConnectionChainResolver finder =
+				new ConnectionChainResolver(name1, name2, connections);
+
+		//find shortest chain
+		List<String> chain = finder.getChain();
+		if (chain == null || chain.size() == 0) {
+			return null;
+		}
+		
+		//list to array
+		String[] temp = new String[chain.size()];
+		return chain.toArray(temp);
 	}
 }

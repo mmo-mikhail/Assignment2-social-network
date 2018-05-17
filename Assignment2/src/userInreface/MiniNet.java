@@ -59,7 +59,7 @@ public class MiniNet extends Application {
 			setupMainPane(mainPain, primaryStage);
 			
 			// Create a scene and place it in the stage
-			Scene scene = new Scene(mainPain, 600, 450);
+			Scene scene = new Scene(mainPain, 500, 550);
 			primaryStage.setTitle("Social Network"); // Set the stage title
 			primaryStage.setScene(scene); // Place the scene in the stage
 			primaryStage.show(); // Display the stage
@@ -134,6 +134,10 @@ public class MiniNet extends Application {
 				new Button("Are two prople directly connected?");
 		btnIsDirectFriends.setOnAction(e -> { areTwoConnected(rootStage); });
 		
+		Button btnConnectionChain =
+				new Button("Bonus: Find connection chain");
+		btnConnectionChain.setOnAction(e -> { findConnectionChain(rootStage); });
+		
 		Button btnDefineRelation = new Button("Define relation");
 		btnDefineRelation.setOnAction(e -> { defineRelation(rootStage); });
 		
@@ -158,19 +162,20 @@ public class MiniNet extends Application {
 		pane.add(btnShowAll, 0, 0);
 		pane.add(btnAddNewPerson, 0, 1);
 		pane.add(btnSelectPerson, 0, 2);
-		pane.add(lbSelectedPerson, 1, 2);
-		pane.add(btnDisplayProfile, 0, 3);
-		pane.add(btnDeleteProfile, 0, 4);
-		pane.add(btnIsDirectFriends, 0, 5);
-		pane.add(btnDefineRelation, 0, 6);
-		pane.add(btnFindSubNames, 0, 7);
+		pane.add(lbSelectedPerson, 0, 3);
+		pane.add(btnDisplayProfile, 0, 4);
+		pane.add(btnDeleteProfile, 0, 5);
+		pane.add(btnFindSubNames, 0, 6);
+		pane.add(btnIsDirectFriends, 0, 7);
+		pane.add(btnConnectionChain, 0, 8);
+		pane.add(btnDefineRelation, 0, 9);
 		
 		//create and add Exit button
 		Button btnExit = new Button("Exit");
 		btnExit.setOnAction(e -> { 
 			rootStage.close();
 		});
-		pane.add(btnExit, 0, 8);
+		pane.add(btnExit, 0, 10);
 	}
 
 	/**
@@ -243,6 +248,34 @@ public class MiniNet extends Application {
 			showError("DB error occured");
 		} catch (Exception e) {
 			showError("Unexpected error occured");
+		}
+	}
+	
+	/**
+	 * finding friends of friends
+	 */
+	private void findConnectionChain(Stage rootStage) {
+		//diplsay stages to select profiles
+		SelectProfile sp1 = new SelectProfile(true);
+		sp1.show(rootStage);			
+		if (sp1.getSelectedProfile() == null) return;
+		
+		SelectProfile sp2 = new SelectProfile(true);
+		sp2.show(rootStage);			
+		if (sp2.getSelectedProfile() == null) return;
+		
+		try {
+			String[] chain = driver.getFriendsChain(
+					sp1.getSelectedProfile(),
+					sp2.getSelectedProfile());
+			if (chain == null) {
+				showError("No friendship connectection found");
+				return;
+			}
+			String text = String.join(" -> ", chain);
+			showError(AlertType.INFORMATION, text);
+		} catch(Exception e) {
+			showError("Error evaluating connection chain");
 		}
 	}
 
