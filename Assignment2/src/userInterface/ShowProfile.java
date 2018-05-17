@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
-package userInreface;
+package userInterface;
 
 import java.io.File;
 import javafx.scene.image.*;
@@ -70,7 +70,8 @@ public class ShowProfile extends SecondaryStage {
 			gridPaneContainer.add(view, 1, 1);
 			
 		} else {
-			Label lbImage = new Label("No Image");
+			Label lbImage = new Label("No Image" + System.lineSeparator()
+				+ "(Please note that images must be stored in 'images' folder)");
 			lbImage.setStyle(labelStyle + " -fx-text-fill: red;");
 			gridPaneContainer.add(lbImage, 1, 1);
 		}
@@ -97,7 +98,7 @@ public class ShowProfile extends SecondaryStage {
 	 */
 	@Override
 	protected double getWidth() {
-		return 300;
+		return 500;
 	}
 	
 	/**

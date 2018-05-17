@@ -1,4 +1,4 @@
-package userInreface;
+package userInterface;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

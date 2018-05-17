@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
-package userInreface;
+package userInterface;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

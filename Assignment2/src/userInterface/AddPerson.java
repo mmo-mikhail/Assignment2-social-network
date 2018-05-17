@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2018 RMIT University, Advanced Programming (COSC1295) Assignment 2
  */
-package userInreface;
+package userInterface;
 
 import java.util.Arrays;
 
@@ -58,6 +58,7 @@ public class AddPerson extends SecondaryStage {
 		gridPaneContainer.add(tfName, 1, 0);
 		gridPaneContainer.add(new Label("Image:"), 0, 1);
 		gridPaneContainer.add(tfImage, 1, 1);
+		gridPaneContainer.add(new Label("(Please note that images must be stored in 'images' folder)"), 2, 1);
 		gridPaneContainer.add(new Label("Status:"), 0, 2);
 		gridPaneContainer.add(tfStatus, 1, 2);
 		gridPaneContainer.add(new Label("Gender:"), 0, 3);
@@ -99,7 +100,7 @@ public class AddPerson extends SecondaryStage {
 	 */
 	@Override
 	protected double getHeight() {
-		return 450;
+		return 300;
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class AddPerson extends SecondaryStage {
 	 */
 	@Override
 	protected double getWidth() {
-		return 450;
+		return 600;
 	}
 	
 	/**

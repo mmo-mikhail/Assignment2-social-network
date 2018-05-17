@@ -29,7 +29,8 @@ public class ConnectionChainResolver {
 	 */
 	private List<String[]> connections;
 
-	public ConnectionChainResolver(String name1, String name2, List<String[]> connections) {
+	public ConnectionChainResolver(String name1, String name2,
+			List<String[]> connections) {
 		this.name1 = name1;
 		this.name2 = name2;
 		this.connections = connections;
